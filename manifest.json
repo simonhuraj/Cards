@@ -1,6 +1,6 @@
 {
-  "name": "BioCard Wallet",
-  "short_name": "BioCard",
+  "name": "MimikCards Wallet",
+  "short_name": "MimikCards",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#0d0d0d",

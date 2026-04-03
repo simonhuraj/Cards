@@ -1,5 +1,5 @@
 const VERSION = 'v1';
-const CACHE_NAME = `biocard-cache-${VERSION}`;
+const CACHE_NAME = `mimikcards-cache-${VERSION}`;
 const ASSETS = [
   './',
   './index.html',

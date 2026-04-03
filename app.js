@@ -1,5 +1,5 @@
-// BioCard App Logic
-const DB_NAME = 'BioCardDB';
+// MimikCards App Logic
+const DB_NAME = 'MimikCardsDB';
 const STORE_NAME = 'CardStore';
 let db;
 
@@ -332,7 +332,7 @@ document.getElementById('btn-export').addEventListener('click', () => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `BioCard_Backup_${new Date().toISOString().split('T')[0]}.json`;
+  a.download = `MimikCards_Backup_${new Date().toISOString().split('T')[0]}.json`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
