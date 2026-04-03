@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>BioCard</title>
+  
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0d0d0d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- DASHBOARD VIEW -->
+  <div id="view-dashboard" class="view active">
+    <header class="header">
+      <h1>BioCard</h1>
+      <button id="btn-open-settings" class="icon-btn" aria-label="Settings">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+      </button>
+    </header>
+    
+    <main class="card-list" id="card-list">
+      <!-- Cards injected here -->
+      <div id="empty-state" class="empty-state" style="display: none;">
+        <p>No cards saved yet.</p>
+        <p>Tap the + button to add one.</p>
+      </div>
+    </main>
+
+    <button id="btn-add-card" class="fab" aria-label="Add Card">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- SCANNER VIEW -->
+  <div id="view-scanner" class="view">
+    <header class="header">
+      <button id="btn-cancel-scan" class="text-btn">Cancel</button>
+      <h2>Add Card</h2>
+      <div style="width:60px"></div>
+    </header>
+    <main class="scanner-container">
+      <div id="reader" width="600px"></div>
+      <p class="scanner-instruction">Scan the card's barcode or QR code.</p>
+    </main>
+  </div>
+
+  <!-- PHOTO CAPTURE VIEW -->
+  <div id="view-photo" class="view">
+    <header class="header">
+       <button id="btn-cancel-photo" class="text-btn">Cancel</button>
+       <h2>Card Photo</h2>
+       <div style="width:60px"></div>
+    </header>
+    <main class="camera-container">
+      <video id="camera-stream" autoplay playsinline></video>
+      <p class="scanner-instruction">Take a photo of the card front.</p>
+      <button id="btn-capture-photo" class="circle-btn">
+        <div class="inner-circle"></div>
+      </button>
+      
+      <!-- Overlay for preview -->
+      <div id="photo-preview-overlay" class="hidden">
+         <img id="photo-preview-image" src="" alt="Captured">
+         <div class="form-container">
+            <input type="text" id="card-name-input" placeholder="e.g. Lidl Plus, Ikea Family" required>
+            <div class="action-buttons">
+              <button id="btn-retake" class="btn secondary">Retake</button>
+              <button id="btn-save-card" class="btn primary">Save Card</button>
+            </div>
+         </div>
+      </div>
+      <canvas id="photo-canvas" class="hidden"></canvas>
+    </main>
+  </div>
+
+  <!-- DETAILS VIEW -->
+  <div id="view-details" class="view">
+    <header class="header transparent">
+       <button id="btn-back-details" class="icon-btn dark-bg">
+         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+         </svg>
+       </button>
+       <button id="btn-delete-card" class="icon-btn dark-bg danger-text">
+         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+         </svg>
+       </button>
+    </header>
+    
+    <main class="details-content">
+      <div class="card-hero">
+         <img id="detail-card-image" src="" alt="Card">
+         <div class="card-hero-overlay"></div>
+         <h2 id="detail-card-name">Card Name</h2>
+      </div>
+      
+      <div class="barcode-container">
+        <div class="brightness-toggle" id="btn-brightness">
+           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+           </svg>
+           <span>Boost Brightness</span>
+        </div>
+        <div id="detail-code-wrapper" class="code-box">
+          <svg id="detail-barcode"></svg>
+          <div id="detail-qrcode"></div>
+        </div>
+        <p id="detail-code-string" class="pure-code"></p>
+      </div>
+    </main>
+  </div>
+
+  <!-- SETTINGS VIEW -->
+  <div id="view-settings" class="view">
+    <header class="header">
+      <button id="btn-back-settings" class="icon-btn">
+         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+         </svg>
+       </button>
+      <h2>Settings</h2>
+      <div style="width:40px"></div>
+    </header>
+    <main class="settings-container">
+       <div class="setting-card">
+          <h3>Data Backup</h3>
+          <p>Export your cards to a JSON file, or restore them from a previous backup.</p>
+          <div class="action-buttons vertical">
+            <button id="btn-export" class="btn primary">Export Backup</button>
+            <button id="btn-import-trigger" class="btn secondary">Import Backup</button>
+            <input type="file" id="import-file" accept=".json" class="hidden">
+          </div>
+       </div>
+       <div class="setting-card">
+          <h3>About</h3>
+          <p>BioCard is a 100% offline, local-first card wallet. Your data never leaves this device.</p>
+       </div>
+    </main>
+  </div>
+
+  <!-- Libraries Setup via CDN -->
+  <script src="https://unpkg.com/html5-qrcode" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+  
+  <script src="app.js" defer></script>
+</body>
+</html>
