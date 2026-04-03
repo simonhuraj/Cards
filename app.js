@@ -9,7 +9,11 @@ let currentScan = null;
 let currentPhotoBase64 = null;
 let scanner = null;
 let cameraStream = null;
-let wakeLock = null;
+let cropper = null;
+
+const cropOverlayEl = document.getElementById('crop-overlay');
+const cropImageEl = document.getElementById('crop-image');
+
 
 // PWA Service Worker Registration
 if ('serviceWorker' in navigator) {
@@ -199,11 +203,36 @@ document.getElementById('btn-capture-photo').addEventListener('click', () => {
   const ctx = canvasEl.getContext('2d');
   ctx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
   
-  // Compress to jpeg
-  currentPhotoBase64 = canvasEl.toDataURL('image/jpeg', 0.8);
-  previewImageEl.src = currentPhotoBase64;
+  // Show crop overlay
+  cropImageEl.src = canvasEl.toDataURL('image/jpeg', 1.0);
+  cropOverlayEl.classList.remove('hidden');
+  
+  if (cropper) { cropper.destroy(); cropper = null; }
+  cropper = new Cropper(cropImageEl, {
+    viewMode: 1,
+    initialAspectRatio: 1,
+    aspectRatio: NaN,
+  });
+});
+
+document.getElementById('btn-cancel-crop').addEventListener('click', () => {
+  if (cropper) { cropper.destroy(); cropper = null; }
+  cropOverlayEl.classList.add('hidden');
+});
+
+document.getElementById('btn-confirm-crop').addEventListener('click', () => {
+  if (!cropper) return;
+  
+  currentPhotoBase64 = cropper.getCroppedCanvas({
+    maxWidth: 1024,
+    maxHeight: 1024
+  }).toDataURL('image/jpeg', 0.8);
+  
+  cropper.destroy(); cropper = null;
+  cropOverlayEl.classList.add('hidden');
   
   // Show form
+  previewImageEl.src = currentPhotoBase64;
   overlayEl.classList.remove('hidden');
   nameInput.value = '';
   nameInput.focus();
@@ -237,6 +266,8 @@ document.getElementById('btn-save-card').addEventListener('click', async () => {
 
 function resetPhotoState() {
   overlayEl.classList.add('hidden');
+  cropOverlayEl.classList.add('hidden');
+  if (cropper) { cropper.destroy(); cropper = null; }
   currentScan = null;
   currentPhotoBase64 = null;
 }
@@ -245,7 +276,7 @@ function resetPhotoState() {
 let activeCardId = null;
 
 document.getElementById('btn-back-details').addEventListener('click', () => {
-  releaseWakeLock();
+
   goToView('view-dashboard');
 });
 
@@ -253,7 +284,7 @@ document.getElementById('btn-delete-card').addEventListener('click', async () =>
   if (confirm("Delete this card?")) {
     await deleteCardFromDB(activeCardId);
     cards = cards.filter(c => c.id !== activeCardId);
-    releaseWakeLock();
+
     renderDashboard();
     goToView('view-dashboard');
   }
@@ -300,26 +331,6 @@ function showCardDetails(card) {
   goToView('view-details');
 }
 
-// Wakelock for Brightness Boost Emulation
-document.getElementById('btn-brightness').addEventListener('click', async () => {
-  if ('wakeLock' in navigator) {
-    try {
-      wakeLock = await navigator.wakeLock.request('screen');
-      alert("Screen will stay awake.");
-    } catch (err) {
-      console.log(err);
-    }
-  } else {
-    alert("Brightness Boost (WakeLock) not supported on this browser.");
-  }
-});
-
-function releaseWakeLock() {
-  if (wakeLock) {
-    wakeLock.release()
-      .then(() => { wakeLock = null; });
-  }
-}
 
 // ----------------- Settings (Export/Import) -----------------
 document.getElementById('btn-back-settings').addEventListener('click', () => {

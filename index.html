@@ -7,12 +7,15 @@
   
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0d0d0d">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
   
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -71,6 +74,17 @@
       <button id="btn-capture-photo" class="circle-btn">
         <div class="inner-circle"></div>
       </button>
+
+      <!-- Overlay for cropping -->
+      <div id="crop-overlay" class="hidden">
+         <div class="crop-container">
+           <img id="crop-image" src="" alt="Crop Target">
+         </div>
+         <div class="action-buttons dock-bottom">
+            <button id="btn-cancel-crop" class="btn secondary">Cancel</button>
+            <button id="btn-confirm-crop" class="btn primary">Confirm</button>
+         </div>
+      </div>
       
       <!-- Overlay for preview -->
       <div id="photo-preview-overlay" class="hidden">
@@ -110,12 +124,7 @@
       </div>
       
       <div class="barcode-container">
-        <div class="brightness-toggle" id="btn-brightness">
-           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-           </svg>
-           <span>Boost Brightness</span>
-        </div>
+
         <div id="detail-code-wrapper" class="code-box">
           <svg id="detail-barcode"></svg>
           <div id="detail-qrcode"></div>
@@ -157,6 +166,7 @@
   <script src="https://unpkg.com/html5-qrcode" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js" defer></script>
   
   <script src="app.js" defer></script>
 </body>
