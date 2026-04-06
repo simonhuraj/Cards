@@ -40,9 +40,17 @@ async function bootstrap() {
     await initDB();
     const state = getState();
     state.cards = await loadCardsFromDB();
+    const hasValidSortOrder = state.cards.every(
+      (card) => Number.isInteger(card.sortOrder) && card.sortOrder >= 0
+    );
+    if (!hasValidSortOrder) {
+      throw new Error("Invalid card data: every card must include a numeric sortOrder");
+    }
+    state.cards.sort((a, b) => a.sortOrder - b.sortOrder);
     renderDashboard();
   } catch (error) {
     console.error("DB init failed", error);
+    alert("Invalid card data format. Re-import a backup that includes sortOrder.");
   }
 }
 

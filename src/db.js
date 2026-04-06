@@ -43,6 +43,12 @@ export function saveCardToDB(card) {
   });
 }
 
+export async function saveCardsToDB(cards) {
+  for (const card of cards) {
+    await saveCardToDB(card);
+  }
+}
+
 export function deleteCardFromDB(id) {
   const { transaction, store } = getStore("readwrite");
   store.delete(id);

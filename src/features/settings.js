@@ -35,6 +35,12 @@ export function bindSettingsEvents(renderDashboard) {
         if (!Array.isArray(importedCards)) {
           throw new Error("Invalid format");
         }
+        const hasValidSortOrder = importedCards.every(
+          (card) => Number.isInteger(card.sortOrder) && card.sortOrder >= 0
+        );
+        if (!hasValidSortOrder) {
+          throw new Error("Backup must contain numeric sortOrder for every card");
+        }
 
         await clearDB();
         for (const card of importedCards) {
@@ -42,12 +48,12 @@ export function bindSettingsEvents(renderDashboard) {
         }
 
         const state = getState();
-        state.cards = importedCards;
+        state.cards = importedCards.slice().sort((a, b) => a.sortOrder - b.sortOrder);
         renderDashboard();
         alert("Cards imported successfully!");
         goToView("view-dashboard");
       } catch (error) {
-        alert("Failed to parse backup file.");
+        alert("Failed to import backup. Ensure all cards include sortOrder.");
         console.error(error);
       }
       document.getElementById("import-file").value = "";

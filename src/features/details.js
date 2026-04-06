@@ -1,4 +1,4 @@
-import { deleteCardFromDB } from "../db.js";
+import { deleteCardFromDB, saveCardsToDB } from "../db.js";
 import { goToView } from "../router.js";
 import { getState } from "../state.js";
 
@@ -62,6 +62,13 @@ export function bindDetailsEvents(renderDashboard) {
     if (confirm("Delete this card?")) {
       await deleteCardFromDB(state.activeCardId);
       state.cards = state.cards.filter((card) => card.id !== state.activeCardId);
+      state.cards
+        .slice()
+        .sort((a, b) => a.sortOrder - b.sortOrder)
+        .forEach((card, index) => {
+          card.sortOrder = index;
+        });
+      await saveCardsToDB(state.cards);
       renderDashboard();
       goToView("view-dashboard");
     }

@@ -116,12 +116,16 @@ export function bindPhotoEvents(renderDashboard) {
       return;
     }
 
+    const nextSortOrder =
+      state.cards.length === 0 ? 0 : Math.max(...state.cards.map((card) => card.sortOrder)) + 1;
+
     const newCard = {
       id: Date.now().toString(),
       name,
       codeString: state.currentScan.text,
       format: state.currentScan.format,
       photoBlob: state.currentPhotoBase64,
+      sortOrder: nextSortOrder,
     };
 
     await saveCardToDB(newCard);

@@ -186,6 +186,8 @@ p { font-size: 16px; line-height: 1.5; color: var(--text-secondary); }
   transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 .card-item:active { transform: scale(0.98); }
+.card-item.dragging { opacity: 0.7; transform: scale(0.98); }
+.card-item.drop-target { outline: 3px solid var(--brand-color); outline-offset: -3px; }
 
 .card-item img {
   width: 100%;
